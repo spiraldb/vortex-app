@@ -26,6 +26,7 @@ pub fn ArrayView(array: SharedArrayData) -> Element {
 
 #[component]
 fn ArraySummary(array: SharedArrayData) -> Element {
+    let size = humansize::format_size(array.inner.nbytes(), humansize::BINARY);
     let row_count = array.inner.len();
     let encoding_id = array.inner.encoding().id().to_string();
     let null_count = array.inner.logical_validity().null_count()?;
@@ -35,12 +36,24 @@ fn ArraySummary(array: SharedArrayData) -> Element {
         div {
             Heading { text: "Summary" }
 
-            div { class: "relative flex flex-col w-full h-full text-gray-700 font-normal bg-zinc-50 bg-clip-border p-3",
+            div { class: "relative flex flex-col w-full h-full text-gray-700 font-normal bg-zinc-50 bg-clip-border",
                 table { class: "table-auto w-full min-w-max text-left border-collapse",
                     tbody {
                         tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
                             td { class: "p-4",
-                                p { class: "block font-sans text-sm antialiased leading-normal",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
+                                    "Size"
+                                }
+                            }
+                            td { class: "p-4",
+                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                    "{size}"
+                                }
+                            }
+                        }
+                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                            td { class: "p-4",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Row Count"
                                 }
                             }
@@ -52,7 +65,7 @@ fn ArraySummary(array: SharedArrayData) -> Element {
                         }
                         tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
                             td { class: "p-4",
-                                p { class: "block font-sans text-sm antialiased leading-normal",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Null Count"
                                 }
                             }
@@ -64,7 +77,7 @@ fn ArraySummary(array: SharedArrayData) -> Element {
                         }
                         tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
                             td { class: "p-4",
-                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Encoding"
                                 }
                             }
@@ -99,7 +112,7 @@ pub fn DTypeInfo(dtype: DType) -> Element {
 pub fn Statistics(stats: StatsSet) -> Element {
     rsx! {
         div {
-            Heading { text: "ArrayStatistics" }
+            Heading { text: "Statistics" }
 
             div { class: "relative flex flex-col w-full h-full text-gray-700 bg-zinc-50 bg-clip-border",
                 table { class: "table-auto w-full min-w-max text-left border-collapse",
@@ -122,7 +135,7 @@ pub fn Statistics(stats: StatsSet) -> Element {
                         for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v.into_value())) {
                             tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
                                 td { class: "p-4",
-                                    p { class: "block font-mono text-sm antialiased leading-normal",
+                                    p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                         "{stat}"
                                     }
                                 }
