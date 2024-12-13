@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
 use bytes::Bytes;
-use components::{array::ArrayView, AppHeader};
+use components::{array::ArrayView, AppHeader, ErrorMessage};
+use dioxus::html::HasFileData;
 use dioxus::prelude::*;
 use dioxus_elements::FileEngine;
 use vortex::{
@@ -38,6 +39,8 @@ fn Home() -> Element {
     let mut array_data = use_signal::<Option<SharedArrayData>>(|| None);
     let mut read_error = use_signal::<Option<String>>(|| None);
 
+    let mut dnd_hovered = use_signal(|| false);
+
     let read_files = move |file_engine: Arc<dyn FileEngine>| async move {
         let contents = file_engine.read_file(&file_engine.files()[0]).await;
         let contents = Bytes::from(contents.unwrap_or_default());
@@ -54,6 +57,7 @@ fn Home() -> Element {
             }
             Ok(reader) => match reader.read_all().await {
                 Ok(array) => {
+                    *read_error.write() = None;
                     *array_data.write() = Some(SharedArrayData {
                         inner: Arc::new(array),
                     })
@@ -68,27 +72,43 @@ fn Home() -> Element {
 
             AppHeader {}
 
-            input {
-                r#type: "file",
-                accept: ".vortex",
-                multiple: false,
-                onchange: move |evt| async move {
-                    if let Some(file_engine) = &evt.files() {
-                        read_files(file_engine.clone()).await
+            div {
+                class: "mt-4",
+                class: "w-7/12 min-h-24 mx-auto border text-justify rounded-lg flex items-center justify-center",
+                class: if dnd_hovered() {
+                    "border-dashed border-green-100"
+                } else {
+                    "border-zinc-50"
+                },
+
+                ondragover: move |evt| {
+                    evt.prevent_default();
+                    dnd_hovered.set(true);
+                },
+                ondragleave: move |_| dnd_hovered.set(false),
+                ondrop: move |evt| async move {
+                    evt.prevent_default();
+                    dnd_hovered.set(false);
+                    if let Some(file_engine) = evt.files() {
+                        read_files(file_engine.clone()).await;
+                    }
+                },
+
+                p {
+                    if dnd_hovered() {
+                        "Let it go now 🎯"
+                    } else {
+                        "Drag 'n drop a .vortex file here 👈"
                     }
                 }
             }
 
-
-            if let Some(array) = array_data() {
+            if let Some(error) = read_error() {
+                ErrorMessage { error }
+            } else if let Some(array) = array_data() {
                 ArrayView { array }
             }
 
-            if let Some(error) = read_error() {
-                pre {
-                    "{error}"
-                }
-            }
         }
     }
 }

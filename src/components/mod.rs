@@ -20,3 +20,13 @@ pub fn Heading(text: String) -> Element {
         p { class: "text-2xl font-sans text-white py-4", "{text}" }
     }
 }
+
+#[component]
+pub fn ErrorMessage(error: String) -> Element {
+    rsx! {
+        Heading { text: "Error" }
+        p { class: "w-full rounded font-mono text-red-700 whitespace-pre-wrap p-10 rounded-md border border-red-700",
+            {error}
+        }
+    }
+}
