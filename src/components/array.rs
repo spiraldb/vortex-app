@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use vortex::{
-    dtype::{DType, StructDType},
+    dtype::DType,
     error::vortex_err,
     stats::{ArrayStatistics, StatsSet},
     validity::ArrayValidity,
@@ -11,22 +11,28 @@ use crate::{components::Heading, SharedArrayData};
 
 /// Show some basic info about an ArrayView.
 #[component]
-pub fn ArrayView(array: SharedArrayData) -> Element {
+pub fn ArrayView(file_name: String, array: SharedArrayData) -> Element {
     let stats = array.inner.statistics().to_set();
 
     rsx! {
         // schema, row_count
-        ArraySummary { array: array.clone() }
+        ArraySummary { array: array.clone(), file_name: file_name.clone() }
+
+        div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
         // Stats.
         Statistics { stats }
 
+        div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
+
         DTypeInfo { dtype: array.inner.dtype().clone() }
+
+        div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
     }
 }
 
 #[component]
-fn ArraySummary(array: SharedArrayData) -> Element {
+fn ArraySummary(array: SharedArrayData, file_name: String) -> Element {
     let size = humansize::format_size(array.inner.nbytes(), humansize::BINARY);
     let row_count = array.inner.len();
     let encoding_id = array.inner.encoding().id().to_string();
@@ -37,53 +43,65 @@ fn ArraySummary(array: SharedArrayData) -> Element {
         div {
             Heading { text: "Summary" }
 
-            div { class: "relative flex flex-col w-full h-full text-gray-700 font-normal bg-zinc-50 bg-clip-border",
+            div { class: "relative flex flex-col max-w-7/12 bg-clip-border",
                 table { class: "table-auto w-full min-w-max text-left border-collapse",
-                    tbody {
-                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                    tbody { class: "border-b border-1 border-zinc-50/10",
+                        tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
+                            td { class: "p-4",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
+                                    "File Name"
+                                }
+                            }
+                            td { class: "p-4",
+                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                    "{file_name}"
+                                }
+                            }
+                        }
+                        tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
                             td { class: "p-4",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Size"
                                 }
                             }
                             td { class: "p-4",
-                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{size}"
                                 }
                             }
                         }
-                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                        tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
                             td { class: "p-4",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Row Count"
                                 }
                             }
                             td { class: "p-4",
-                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{row_count}"
                                 }
                             }
                         }
-                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                        tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
                             td { class: "p-4",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Null Count"
                                 }
                             }
                             td { class: "p-4",
-                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{null_count} ({null_pct}%)"
                                 }
                             }
                         }
-                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                        tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
                             td { class: "p-4",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Encoding"
                                 }
                             }
                             td { class: "p-4",
-                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{encoding_id}"
                                 }
                             }
@@ -129,17 +147,18 @@ pub fn SchemaTable(dtype: DType) -> Element {
     let names_and_types = field_names.iter().zip(field_types.iter());
 
     rsx! {
-        div { class: "relative flex flex-col w-full h-full text-gray-700 bg-zinc-50 bg-clip-border",
+        div { class: "relative flex flex-col max-w-7/12 bg-clip-border",
             table { class: "table-auto w-full min-w-max text-left border-collapse",
                 thead {
+                    class: "bg-neutral-700 border-b border-1 border-zinc-50/10",
                     tr {
-                        th { class: "p-4 border-b border-blue-gray-100",
-                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
+                        th { class: "p-4",
+                            p { class: "block font-sans text-sm antialiased font-normal leading-none opacity-70",
                                 "Field Name"
                             }
                         }
-                        th { class: "p-4 border-b border-blue-gray-100",
-                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
+                        th { class: "p-4",
+                            p { class: "block font-sans text-sm antialiased font-normal leading-none opacity-70",
                                 "Type"
                             }
                         }
@@ -148,7 +167,7 @@ pub fn SchemaTable(dtype: DType) -> Element {
 
                 tbody {
                     for (field_name, field_type) in names_and_types {
-                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                        tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
                             td { class: "p-4",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{field_name}"
@@ -185,7 +204,7 @@ pub fn Statistics(stats: StatsSet) -> Element {
 #[component]
 fn StatsTable(stats: StatsSet) -> Element {
     rsx! {
-        div { class: "relative flex flex-col w-full h-full text-gray-700 bg-zinc-50 bg-clip-border",
+        div { class: "relative flex flex-col w-full h-full text-gray-700",
             table { class: "table-auto w-full min-w-max text-left border-collapse",
                 thead {
                     tr {
@@ -204,7 +223,7 @@ fn StatsTable(stats: StatsSet) -> Element {
 
                 tbody {
                     for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v.into_value())) {
-                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:opacity-75 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
                             td { class: "p-4",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{stat}"

@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use bytes::Bytes;
 use components::{array::ArrayView, AppHeader, ErrorMessage};
-use dioxus::html::HasFileData;
 use dioxus::prelude::*;
+use dioxus::{html::HasFileData, logger::tracing};
 use dioxus_elements::FileEngine;
 use vortex::{
     file::{LayoutContext, LayoutDeserializer, VortexReadBuilder},
@@ -36,12 +36,17 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     // Create a file reader.
+    let mut file_name = use_signal(|| String::new());
     let mut array_data = use_signal::<Option<SharedArrayData>>(|| None);
     let mut read_error = use_signal::<Option<String>>(|| None);
+
+    // We can provide a writable signal to push a new history element.
+    let mut history_stack: Signal<Vec<SharedArrayData>> = use_signal(|| Vec::new());
 
     let mut dnd_hovered = use_signal(|| false);
 
     let read_files = move |file_engine: Arc<dyn FileEngine>| async move {
+        file_name.set(file_engine.files()[0].clone());
         let contents = file_engine.read_file(&file_engine.files()[0]).await;
         let contents = Bytes::from(contents.unwrap_or_default());
 
@@ -67,48 +72,39 @@ fn Home() -> Element {
         }
     };
 
+    tracing::info!("hello from my element");
+
     rsx! {
-        div { class: "w-7/12 my-10 mx-auto p-8 bg-gray-800 rounded-xl border-2 border-gray-500",
-
+        // Navbar component
+        div {
+            class: "p-3 flex flex-row items-center gap-x-3",
+            class: "border-b border-gray-100/10",
             AppHeader {}
+        }
 
-            div {
-                class: "mt-4",
-                class: "w-7/12 min-h-24 mx-auto border text-justify rounded-lg flex items-center justify-center",
-                class: if dnd_hovered() {
-                    "border-dashed border-green-100"
-                } else {
-                    "border-zinc-50"
-                },
+        // Main content
+        div { class: "w-full px-4 py-4",
 
-                ondragover: move |evt| {
-                    evt.prevent_default();
-                    dnd_hovered.set(true);
-                },
-                ondragleave: move |_| dnd_hovered.set(false),
-                ondrop: move |evt| async move {
-                    evt.prevent_default();
-                    dnd_hovered.set(false);
-                    if let Some(file_engine) = evt.files() {
-                        read_files(file_engine.clone()).await;
-                    }
-                },
-
-                p {
-                    if dnd_hovered() {
-                        "Let it go now 🎯"
-                    } else {
-                        "Drag 'n drop a .vortex file here 👈"
+            input {
+                r#type: "file",
+                accept: ".vortex",
+                multiple: false,
+                onchange: move |evt| async move {
+                    if let Some(file_engine) = &evt.files() {
+                        read_files(file_engine.clone()).await
                     }
                 }
             }
 
+
+
             if let Some(error) = read_error() {
+                div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
                 ErrorMessage { error }
             } else if let Some(array) = array_data() {
-                ArrayView { array }
+                div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
+                ArrayView { file_name: file_name(), array }
             }
-
         }
     }
 }

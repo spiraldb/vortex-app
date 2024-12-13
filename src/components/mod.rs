@@ -9,7 +9,7 @@ pub fn AppHeader() -> Element {
     rsx! {
         div { class: "flex flex-row items-center",
             img { class: "max-w-8 max-h-8", src: LOGO }
-            p { class: "mx-4 font-serif text-2xl", "Vortex File Explorer" }
+            p { class: "mx-4 font-sans text-2xl", "Vortex File Explorer" }
         }
     }
 }
