@@ -102,9 +102,7 @@ pub fn DTypeInfo(dtype: DType) -> Element {
 
     rsx! {
         Heading { text: "Schema" }
-        p {
-            "{stringified}"
-        }
+        p { "{stringified}" }
     }
 }
 
@@ -114,35 +112,46 @@ pub fn Statistics(stats: StatsSet) -> Element {
         div {
             Heading { text: "Statistics" }
 
-            div { class: "relative flex flex-col w-full h-full text-gray-700 bg-zinc-50 bg-clip-border",
-                table { class: "table-auto w-full min-w-max text-left border-collapse",
-                    thead {
-                        tr {
-                            th { class: "p-4 border-b border-blue-gray-100",
-                                p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
-                                    "Statistic"
-                                }
+            if stats.is_empty() {
+                p { "No stats" }
+            } else {
+                StatsTable { stats }
+            }
+        }
+    }
+}
+
+#[component]
+fn StatsTable(stats: StatsSet) -> Element {
+    rsx! {
+        div { class: "relative flex flex-col w-full h-full text-gray-700 bg-zinc-50 bg-clip-border",
+            table { class: "table-auto w-full min-w-max text-left border-collapse",
+                thead {
+                    tr {
+                        th { class: "p-4 border-b border-blue-gray-100",
+                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
+                                "Statistic"
                             }
-                            th { class: "p-4 border-b border-blue-gray-100",
-                                p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
-                                    "Value"
-                                }
+                        }
+                        th { class: "p-4 border-b border-blue-gray-100",
+                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
+                                "Value"
                             }
                         }
                     }
+                }
 
-                    tbody {
-                        for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v.into_value())) {
-                            tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
-                                td { class: "p-4",
-                                    p { class: "block font-sans font-bold text-sm antialiased leading-normal",
-                                        "{stat}"
-                                    }
+                tbody {
+                    for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v.into_value())) {
+                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                            td { class: "p-4",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
+                                    "{stat}"
                                 }
-                                td { class: "p-4",
-                                    p { class: "block font-mono text-sm antialiased leading-normal",
-                                        "{value}"
-                                    }
+                            }
+                            td { class: "p-4",
+                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                    "{value}"
                                 }
                             }
                         }

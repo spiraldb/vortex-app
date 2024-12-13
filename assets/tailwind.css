@@ -593,6 +593,10 @@ video {
   display: table;
 }
 
+.contents {
+  display: contents;
+}
+
 .h-full {
   height: 100%;
 }

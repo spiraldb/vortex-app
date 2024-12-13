@@ -4988,6 +4988,7 @@ dependencies = [
 name = "vortex-app"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "dioxus",
  "humansize",
  "vortex",
