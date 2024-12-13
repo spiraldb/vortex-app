@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use vortex::{
-    dtype::DType,
+    dtype::{DType, StructDType},
+    error::vortex_err,
     stats::{ArrayStatistics, StatsSet},
     validity::ArrayValidity,
     ArrayDType,
@@ -97,12 +98,72 @@ fn ArraySummary(array: SharedArrayData) -> Element {
 /// Component to display DType information for an Array.
 #[component]
 pub fn DTypeInfo(dtype: DType) -> Element {
-    let stringified = format!("{dtype}");
-    // Send a bunch of key/value pairs through the UI
+    let inner = if dtype.is_struct() {
+        rsx! {
+            SchemaTable { dtype }
+        }
+    } else {
+        let stringified = format!("{dtype}");
+        rsx! {
+            p { "{stringified}" }
+        }
+    };
 
     rsx! {
         Heading { text: "Schema" }
-        p { "{stringified}" }
+
+        {inner}
+    }
+}
+
+#[component]
+pub fn SchemaTable(dtype: DType) -> Element {
+    let field_names = dtype
+        .as_struct()
+        .ok_or(vortex_err!("SchemaTable must receive a StructDType"))?
+        .names();
+    let field_types = dtype
+        .as_struct()
+        .ok_or(vortex_err!("SchemaTable must receive a StructDType"))?
+        .dtypes();
+    let names_and_types = field_names.iter().zip(field_types.iter());
+
+    rsx! {
+        div { class: "relative flex flex-col w-full h-full text-gray-700 bg-zinc-50 bg-clip-border",
+            table { class: "table-auto w-full min-w-max text-left border-collapse",
+                thead {
+                    tr {
+                        th { class: "p-4 border-b border-blue-gray-100",
+                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
+                                "Field Name"
+                            }
+                        }
+                        th { class: "p-4 border-b border-blue-gray-100",
+                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
+                                "Type"
+                            }
+                        }
+                    }
+                }
+
+                tbody {
+                    for (field_name, field_type) in names_and_types {
+                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:bg-slate-100 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
+                            td { class: "p-4",
+                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
+                                    "{field_name}"
+                                }
+                            }
+                            td { class: "p-4",
+                                p { class: "block font-mono text-sm antialiased leading-normal",
+                                    "{field_type}"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
