@@ -30,9 +30,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - uses: cargo-bins/cargo-binstall@main
       - name: Install Dioxus-CLI
-        shell: bash
-        run: cargo install dioxus-cli
+        run: cargo binstall dioxus-cli
       - name: "Build the app with Dioxus"
         run: dx build --release
       - name: Upload artifact
