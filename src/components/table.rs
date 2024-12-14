@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use dioxus::prelude::*;
 
 // TODO(aduffy): Convert all of our tables to types in here instead.
@@ -47,6 +49,7 @@ pub struct TableCellProps {
 }
 
 /// Let's create a few of these cell values instead.
+#[component]
 pub fn TableCell(props: TableCellProps) -> Element {
     let font_family = match props.font_family {
         FontStyle::Inherit => "",

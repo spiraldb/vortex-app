@@ -3,7 +3,6 @@ use std::sync::Arc;
 
 use bytes::Bytes;
 use components::{array::ArrayView, AppHeader, ErrorMessage};
-use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use dioxus_elements::FileEngine;
 use vortex::{
@@ -37,11 +36,11 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     // Create a file reader.
-    let mut file_name = use_signal(|| String::new());
+    let mut file_name = use_signal(String::new);
     let mut read_error = use_signal::<Option<String>>(|| None);
 
     // Push the latest history for each of these elements.
-    let mut history_stack: Signal<VecDeque<SharedArrayData>> = use_signal(|| VecDeque::new());
+    let mut history_stack: Signal<VecDeque<SharedArrayData>> = use_signal(VecDeque::new);
 
     let read_files = move |file_engine: Arc<dyn FileEngine>| async move {
         file_name.set(file_engine.files()[0].clone());

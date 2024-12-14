@@ -47,7 +47,7 @@ pub fn ArrayView(file_name: String, history_stack: Signal<VecDeque<SharedArrayDa
 
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
-            if array.inner.children().len() > 0 {
+            if !array.inner.children().is_empty() {
                 ArrayChildren { history_stack }
             }
         }
