@@ -1,33 +1,56 @@
-use dioxus::prelude::*;
-use vortex::{
-    dtype::DType,
-    error::vortex_err,
-    stats::{ArrayStatistics, StatsSet},
-    validity::ArrayValidity,
-    ArrayDType,
-};
+use std::{collections::VecDeque, sync::Arc};
 
-use crate::{components::Heading, SharedArrayData};
+use dioxus::{logger::tracing, prelude::*};
+use vortex::{stats::ArrayStatistics, validity::ArrayValidity, ArrayDType};
+
+use crate::{
+    components::{dtype::DTypeInfo, stats::Statistics, Heading},
+    SharedArrayData,
+};
 
 /// Show some basic info about an ArrayView.
 #[component]
-pub fn ArrayView(file_name: String, array: SharedArrayData) -> Element {
+pub fn ArrayView(file_name: String, history_stack: Signal<VecDeque<SharedArrayData>>) -> Element {
+    // Use the history stack to take data from the front/back of the stack
+    let array = history_stack()[0].clone();
     let stats = array.inner.statistics().to_set();
 
     rsx! {
-        // schema, row_count
-        ArraySummary { array: array.clone(), file_name: file_name.clone() }
+        div { class: "flex flex-col mt-4",
+            // If there are previous history elements, we present a Back button which allows us to
+            // pop the stack and go back up to the parent element.
+            if history_stack().len() > 1 {
+                div {
+                    class: "flex flex-row items-center",
+                    button {
+                        class: "btn btn-primary bg-lime-800 text-lime-400 hover:bg-lime-600/75 px-4 py-2 rounded-md",
+                        onclick: move |_| {
+                            // Pop the stack to go back to the parent.
+                            history_stack.write().pop_front();
+                        },
+                        "Back"
+                    }
+                }
+            }
 
-        div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
+            // schema, row_count
+            ArraySummary { array: array.clone(), file_name: file_name.clone() }
 
-        // Stats.
-        Statistics { stats }
+            div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
-        div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
+            // Stats.
+            Statistics { stats }
 
-        DTypeInfo { dtype: array.inner.dtype().clone() }
+            div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
-        div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
+            DTypeInfo { dtype: array.inner.dtype().clone() }
+
+            div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
+
+            if array.inner.children().len() > 0 {
+                ArrayChildren { history_stack }
+            }
+        }
     }
 }
 
@@ -47,60 +70,60 @@ fn ArraySummary(array: SharedArrayData, file_name: String) -> Element {
                 table { class: "table-auto w-full min-w-max text-left border-collapse",
                     tbody { class: "border-b border-1 border-zinc-50/10",
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "File Name"
                                 }
                             }
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-mono text-sm antialiased leading-normal",
                                     "{file_name}"
                                 }
                             }
                         }
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Size"
                                 }
                             }
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{size}"
                                 }
                             }
                         }
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Row Count"
                                 }
                             }
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{row_count}"
                                 }
                             }
                         }
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Null Count"
                                 }
                             }
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{null_count} ({null_pct}%)"
                                 }
                             }
                         }
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "Encoding"
                                 }
                             }
-                            td { class: "p-4",
+                            td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",
                                     "{encoding_id}"
                                 }
@@ -113,126 +136,48 @@ fn ArraySummary(array: SharedArrayData, file_name: String) -> Element {
     }
 }
 
-/// Component to display DType information for an Array.
 #[component]
-pub fn DTypeInfo(dtype: DType) -> Element {
-    let inner = if dtype.is_struct() {
-        rsx! {
-            SchemaTable { dtype }
-        }
-    } else {
-        let stringified = format!("{dtype}");
-        rsx! {
-            p { "{stringified}" }
-        }
-    };
-
+pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedArrayData>>) -> Element {
+    let array = history_stack()[0].clone();
     rsx! {
-        Heading { text: "Schema" }
+        Heading { text: "Child Arrays" }
 
-        {inner}
-    }
-}
+        p {
+            class: "p-4 font-regular font-sans text-sm italic text-slate-300/30",
+            "Click one of the Child Arrays to explore further"
+        }
 
-#[component]
-pub fn SchemaTable(dtype: DType) -> Element {
-    let field_names = dtype
-        .as_struct()
-        .ok_or(vortex_err!("SchemaTable must receive a StructDType"))?
-        .names();
-    let field_types = dtype
-        .as_struct()
-        .ok_or(vortex_err!("SchemaTable must receive a StructDType"))?
-        .dtypes();
-    let names_and_types = field_names.iter().zip(field_types.iter());
-
-    rsx! {
-        div { class: "relative flex flex-col max-w-7/12 bg-clip-border",
-            table { class: "table-auto w-full min-w-max text-left border-collapse",
-                thead {
-                    class: "bg-neutral-700 border-b border-1 border-zinc-50/10",
+        table { class: "table-auto w-full min-w-max max-h-96 overflow-y-scroll text-left border-collapse",
+            tbody { class: "border-b border-1 border-zinc-50/10",
+                for (idx , child) in array.inner.children().iter().cloned().enumerate() {
                     tr {
-                        th { class: "p-4",
-                            p { class: "block font-sans text-sm antialiased font-normal leading-none opacity-70",
-                                "Field Name"
+                        class: "font-normal border-b border-1 border-zinc-50/10",
+                        // Interactivity
+                        class: "cursor-pointer",
+                        // Hover state
+                        class: "hover:bg-neutral-800/75 hover:font-bold hover:text-sky-500",
+                        onclick: move |_| {
+                            let child = child.clone();
+                            tracing::info!("descending into the {idx} child");
+                            history_stack
+                                .write()
+                                .push_front(SharedArrayData {
+                                    inner: Arc::new(child),
+                                });
+                        },
+                        td { class: "p-2",
+                            p { class: "block font-sans text-sm antialiased leading-normal",
+                                "Chunk {idx}"
                             }
                         }
-                        th { class: "p-4",
-                            p { class: "block font-sans text-sm antialiased font-normal leading-none opacity-70",
-                                "Type"
+                        td { class: "p-2",
+                            p { class: "block font-mono text-sm antialiased leading-normal",
+                                "{child.len()} rows"
                             }
                         }
-                    }
-                }
-
-                tbody {
-                    for (field_name, field_type) in names_and_types {
-                        tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
-                            td { class: "p-4",
-                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
-                                    "{field_name}"
-                                }
-                            }
-                            td { class: "p-4",
-                                p { class: "block font-mono text-sm antialiased leading-normal",
-                                    "{field_type}"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-#[component]
-pub fn Statistics(stats: StatsSet) -> Element {
-    rsx! {
-        div {
-            Heading { text: "Statistics" }
-
-            if stats.is_empty() {
-                p { "No stats" }
-            } else {
-                StatsTable { stats }
-            }
-        }
-    }
-}
-
-#[component]
-fn StatsTable(stats: StatsSet) -> Element {
-    rsx! {
-        div { class: "relative flex flex-col w-full h-full text-gray-700",
-            table { class: "table-auto w-full min-w-max text-left border-collapse",
-                thead {
-                    tr {
-                        th { class: "p-4 border-b border-blue-gray-100",
-                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
-                                "Statistic"
-                            }
-                        }
-                        th { class: "p-4 border-b border-blue-gray-100",
-                            p { class: "block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70",
-                                "Value"
-                            }
-                        }
-                    }
-                }
-
-                tbody {
-                    for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v.into_value())) {
-                        tr { class: "font-normal text-blue-gray-900 hover:font-bold hover:opacity-75 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-blue-gray-50",
-                            td { class: "p-4",
-                                p { class: "block font-sans font-bold text-sm antialiased leading-normal",
-                                    "{stat}"
-                                }
-                            }
-                            td { class: "p-4",
-                                p { class: "block font-mono text-sm antialiased leading-normal",
-                                    "{value}"
-                                }
+                        td { class: "p-2",
+                            p { class: "block font-mono text-sm antialiased leading-normal",
+                                "{humansize::format_size(child.nbytes(), humansize::BINARY)}"
                             }
                         }
                     }

@@ -1,9 +1,10 @@
+use std::collections::VecDeque;
 use std::sync::Arc;
 
 use bytes::Bytes;
 use components::{array::ArrayView, AppHeader, ErrorMessage};
+use dioxus::logger::tracing;
 use dioxus::prelude::*;
-use dioxus::{html::HasFileData, logger::tracing};
 use dioxus_elements::FileEngine;
 use vortex::{
     file::{LayoutContext, LayoutDeserializer, VortexReadBuilder},
@@ -37,13 +38,10 @@ fn App() -> Element {
 fn Home() -> Element {
     // Create a file reader.
     let mut file_name = use_signal(|| String::new());
-    let mut array_data = use_signal::<Option<SharedArrayData>>(|| None);
     let mut read_error = use_signal::<Option<String>>(|| None);
 
-    // We can provide a writable signal to push a new history element.
-    let mut history_stack: Signal<Vec<SharedArrayData>> = use_signal(|| Vec::new());
-
-    let mut dnd_hovered = use_signal(|| false);
+    // Push the latest history for each of these elements.
+    let mut history_stack: Signal<VecDeque<SharedArrayData>> = use_signal(|| VecDeque::new());
 
     let read_files = move |file_engine: Arc<dyn FileEngine>| async move {
         file_name.set(file_engine.files()[0].clone());
@@ -63,16 +61,15 @@ fn Home() -> Element {
             Ok(reader) => match reader.read_all().await {
                 Ok(array) => {
                     *read_error.write() = None;
-                    *array_data.write() = Some(SharedArrayData {
+                    // Push onto the front of the stack.
+                    history_stack.write().push_front(SharedArrayData {
                         inner: Arc::new(array),
-                    })
+                    });
                 }
                 Err(err) => *read_error.write() = Some(err.to_string()),
             },
         }
     };
-
-    tracing::info!("hello from my element");
 
     rsx! {
         // Navbar component
@@ -97,13 +94,10 @@ fn Home() -> Element {
             }
 
 
-
             if let Some(error) = read_error() {
-                div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
                 ErrorMessage { error }
-            } else if let Some(array) = array_data() {
-                div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
-                ArrayView { file_name: file_name(), array }
+            } else if !history_stack().is_empty() {
+                ArrayView { file_name: file_name(), history_stack }
             }
         }
     }
