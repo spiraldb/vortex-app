@@ -26,12 +26,12 @@ fn StatsTable(stats: StatsSet) -> Element {
                 tbody {
                     for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v.into_value())) {
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
-                            td { class: "p-4",
+                            td { class: "p-2",
                                 p { class: "block font-sans text-sm antialiased leading-normal",
                                     "{stat}"
                                 }
                             }
-                            td { class: "p-4",
+                            td { class: "p-2",
                                 p { class: "block font-mono text-sm antialiased leading-normal",
                                     "{value}"
                                 }
