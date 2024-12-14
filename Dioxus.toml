@@ -4,7 +4,7 @@
 name = "vortex-app"
 
 [web.app]
-
+base_path = "/vortex-app"
 # HTML title tag content
 title = "vortex-app"
 
