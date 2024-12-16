@@ -4,7 +4,7 @@ use dioxus::{logger::tracing, prelude::*};
 use vortex::{stats::ArrayStatistics, validity::ArrayValidity, ArrayDType, ArrayData};
 
 use crate::{
-    components::{dtype::DTypeInfo, stats::Statistics, Heading},
+    components::{array_info::EncodingInfo, dtype::DTypeInfo, stats::Statistics, Heading},
     SharedPtr,
 };
 
@@ -47,6 +47,10 @@ pub fn ArrayView(
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
             DTypeInfo { dtype: array.dtype().clone() }
+
+            div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
+
+            EncodingInfo { array: array.clone() }
 
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
