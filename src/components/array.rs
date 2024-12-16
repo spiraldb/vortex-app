@@ -1,19 +1,22 @@
 use std::{collections::VecDeque, sync::Arc};
 
 use dioxus::{logger::tracing, prelude::*};
-use vortex::{stats::ArrayStatistics, validity::ArrayValidity, ArrayDType};
+use vortex::{stats::ArrayStatistics, validity::ArrayValidity, ArrayDType, ArrayData};
 
 use crate::{
     components::{dtype::DTypeInfo, stats::Statistics, Heading},
-    SharedArrayData,
+    SharedPtr,
 };
 
 /// Show some basic info about an ArrayView.
 #[component]
-pub fn ArrayView(file_name: String, history_stack: Signal<VecDeque<SharedArrayData>>) -> Element {
+pub fn ArrayView(
+    file_name: String,
+    history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>,
+) -> Element {
     // Use the history stack to take data from the front/back of the stack
     let array = history_stack()[0].clone();
-    let stats = array.inner.statistics().to_set();
+    let stats = array.statistics().to_set();
 
     rsx! {
         div { class: "flex flex-col mt-4",
@@ -43,11 +46,11 @@ pub fn ArrayView(file_name: String, history_stack: Signal<VecDeque<SharedArrayDa
 
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
-            DTypeInfo { dtype: array.inner.dtype().clone() }
+            DTypeInfo { dtype: array.dtype().clone() }
 
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
-            if !array.inner.children().is_empty() {
+            if !array.children().is_empty() {
                 ArrayChildren { history_stack }
             }
         }
@@ -55,11 +58,11 @@ pub fn ArrayView(file_name: String, history_stack: Signal<VecDeque<SharedArrayDa
 }
 
 #[component]
-fn ArraySummary(array: SharedArrayData, file_name: String) -> Element {
-    let size = humansize::format_size(array.inner.nbytes(), humansize::BINARY);
-    let row_count = array.inner.len();
-    let encoding_id = array.inner.encoding().id().to_string();
-    let null_count = array.inner.logical_validity().null_count()?;
+fn ArraySummary(array: SharedPtr<ArrayData>, file_name: String) -> Element {
+    let size = humansize::format_size(array.nbytes(), humansize::BINARY);
+    let row_count = array.len();
+    let encoding_id = array.encoding().id().to_string();
+    let null_count = array.logical_validity().null_count()?;
     let null_pct: f64 = 100. * (null_count as f64) / (row_count as f64);
 
     rsx! {
@@ -137,7 +140,7 @@ fn ArraySummary(array: SharedArrayData, file_name: String) -> Element {
 }
 
 #[component]
-pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedArrayData>>) -> Element {
+pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>) -> Element {
     let array = history_stack()[0].clone();
     rsx! {
         Heading { text: "Child Arrays" }
@@ -149,7 +152,7 @@ pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedArrayData>>) -> El
 
         table { class: "table-auto w-full min-w-max max-h-96 overflow-y-scroll text-left border-collapse",
             tbody { class: "border-b border-1 border-zinc-50/10",
-                for (idx , child) in array.inner.children().iter().cloned().enumerate() {
+                for (idx , child) in array.children().iter().cloned().enumerate() {
                     tr {
                         class: "font-normal border-b border-1 border-zinc-50/10",
                         // Interactivity
@@ -161,9 +164,7 @@ pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedArrayData>>) -> El
                             tracing::info!("descending into the {idx} child");
                             history_stack
                                 .write()
-                                .push_front(SharedArrayData {
-                                    inner: Arc::new(child),
-                                });
+                                .push_front(SharedPtr(Arc::new(child)));
                         },
                         td { class: "p-2",
                             p { class: "block font-sans text-sm antialiased leading-normal",
