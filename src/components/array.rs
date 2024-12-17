@@ -39,6 +39,8 @@ pub fn ArrayView(
             // schema, row_count
             ArraySummary { array: array.clone(), file_name: file_name.clone() }
 
+            EncodingInfo { array: array.clone() }
+
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
             // Stats.
@@ -47,10 +49,6 @@ pub fn ArrayView(
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
             DTypeInfo { dtype: array.dtype().clone() }
-
-            div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
-
-            EncodingInfo { array: array.clone() }
 
             div { class: "my-12 h-0.5 border-t-0 bg-neutral-100/30" }
 
@@ -172,7 +170,7 @@ pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>) 
                         },
                         td { class: "p-2",
                             p { class: "block font-sans text-sm antialiased leading-normal",
-                                "Chunk {idx}"
+                                "Child {idx}"
                             }
                         }
                         td { class: "p-2",
