@@ -41,6 +41,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "aligned-buffer"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b0ccaa876f7e00c6a4818bf878d5d4b387eff28c79bea024824469ec25509d"
+dependencies = [
+ "const_panic",
+ "crossbeam-utils",
+ "rkyv",
+ "stable_deref_trait",
+ "static_assertions",
+ "thiserror 1.0.69",
+]
+
+[[package]]
 name = "allocator-api2"
 version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -459,6 +473,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 
 [[package]]
+name = "bytecheck"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50c8f430744b23b54ad15161fcbc22d82a29b73eacbe425fea23ec822600bc6f"
+dependencies = [
+ "bytecheck_derive",
+ "ptr_meta",
+ "rancor",
+ "simdutf8",
+]
+
+[[package]]
+name = "bytecheck_derive"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "523363cbe1df49b68215efdf500b103ac3b0fb4836aed6d15689a076eadb8fff"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
+]
+
+[[package]]
 name = "byteorder"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -731,6 +768,12 @@ dependencies = [
  "quote",
  "unicode-xid",
 ]
+
+[[package]]
+name = "const_panic"
+version = "0.2.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "53857514f72ee4a2b583de67401e3ff63a5472ca4acf289d09a9ea7636dfec17"
 
 [[package]]
 name = "convert_case"
@@ -3068,6 +3111,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "munge"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64142d38c84badf60abf06ff9bd80ad2174306a5b11bd4706535090a30a419df"
+dependencies = [
+ "munge_macro",
+]
+
+[[package]]
+name = "munge_macro"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1bb5c1d8184f13f7d0ccbeeca0def2f9a181bce2624302793005f5ca8aa62e5e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
+]
+
+[[package]]
 name = "nanorand"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3775,12 +3838,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "ptr_meta"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe9e76f66d3f9606f44e45598d155cb13ecf09f4a28199e48daf8c8fc937ea90"
+dependencies = [
+ "ptr_meta_derive",
+]
+
+[[package]]
+name = "ptr_meta_derive"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca414edb151b4c8d125c12566ab0d74dc9cdba36fb80eb7b848c15f495fd32d1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5b9d34b8991d19d98081b46eacdd8eb58c6f2b201139f7c5f643cc155a633af"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "rancor"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "caf5f7161924b9d1cea0e4cabc97c372cea92b5f927fc13c6bca67157a0ad947"
+dependencies = [
+ "ptr_meta",
 ]
 
 [[package]]
@@ -3926,6 +4018,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
+name = "rend"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a35e8a6bf28cd121053a66aa2e6a2e3eaffad4a60012179f0e864aa5ffeff215"
+dependencies = [
+ "bytecheck",
+]
+
+[[package]]
 name = "reqwest"
 version = "0.12.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3984,6 +4085,36 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "rkyv"
+version = "0.8.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b11a153aec4a6ab60795f8ebe2923c597b16b05bb1504377451e705ef1a45323"
+dependencies = [
+ "bytecheck",
+ "bytes",
+ "hashbrown 0.15.2",
+ "indexmap 2.7.0",
+ "munge",
+ "ptr_meta",
+ "rancor",
+ "rend",
+ "rkyv_derive",
+ "tinyvec",
+ "uuid",
+]
+
+[[package]]
+name = "rkyv_derive"
+version = "0.8.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "beb382a4d9f53bd5c0be86b10d8179c3f8a14c30bf774ff77096ed6581e35981"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
 ]
 
 [[package]]
@@ -4298,6 +4429,12 @@ name = "simd-adler32"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d66dc143e6b11c1eddc06d5c423cfc97062865baf299914ab64caa38182078fe"
+
+[[package]]
+name = "simdutf8"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
 
 [[package]]
 name = "siphasher"
@@ -4654,6 +4791,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "tinyvec"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "445e881f4f6d382d5f27c034e25eb92edd7c784ceab92a0937db7f2e9471b938"
+dependencies = [
+ "tinyvec_macros",
+]
+
+[[package]]
+name = "tinyvec_macros"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+
+[[package]]
 name = "tokio"
 version = "1.42.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4941,7 +5093,7 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 [[package]]
 name = "vortex"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "vortex-alp",
  "vortex-array",
@@ -4971,7 +5123,7 @@ dependencies = [
 [[package]]
 name = "vortex-alp"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-buffer",
  "itertools",
@@ -4997,7 +5149,7 @@ dependencies = [
 [[package]]
 name = "vortex-array"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-arith",
  "arrow-array",
@@ -5036,7 +5188,7 @@ dependencies = [
 [[package]]
 name = "vortex-buffer"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-buffer",
  "bytes",
@@ -5046,7 +5198,7 @@ dependencies = [
 [[package]]
 name = "vortex-bytebool"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-buffer",
  "num-traits",
@@ -5061,7 +5213,7 @@ dependencies = [
 [[package]]
 name = "vortex-datetime-dtype"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-schema",
  "jiff",
@@ -5074,7 +5226,7 @@ dependencies = [
 [[package]]
 name = "vortex-datetime-parts"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "itertools",
  "serde",
@@ -5088,7 +5240,7 @@ dependencies = [
 [[package]]
 name = "vortex-dict"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-buffer",
  "hashbrown 0.15.2",
@@ -5103,7 +5255,7 @@ dependencies = [
 [[package]]
 name = "vortex-dtype"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "flatbuffers",
  "half",
@@ -5117,7 +5269,7 @@ dependencies = [
 [[package]]
 name = "vortex-error"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-schema",
  "flatbuffers",
@@ -5130,7 +5282,7 @@ dependencies = [
 [[package]]
 name = "vortex-expr"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "itertools",
  "vortex-array",
@@ -5142,7 +5294,7 @@ dependencies = [
 [[package]]
 name = "vortex-fastlanes"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrayref",
  "arrow-buffer",
@@ -5160,7 +5312,7 @@ dependencies = [
 [[package]]
 name = "vortex-file"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -5187,7 +5339,7 @@ dependencies = [
 [[package]]
 name = "vortex-flatbuffers"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "flatbuffers",
  "vortex-buffer",
@@ -5196,7 +5348,7 @@ dependencies = [
 [[package]]
 name = "vortex-fsst"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -5212,7 +5364,7 @@ dependencies = [
 [[package]]
 name = "vortex-io"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "bytes",
  "cfg-if",
@@ -5229,24 +5381,25 @@ dependencies = [
 [[package]]
 name = "vortex-ipc"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
+ "aligned-buffer",
  "bytes",
  "flatbuffers",
  "futures-util",
  "itertools",
+ "pin-project-lite",
  "vortex-array",
  "vortex-buffer",
  "vortex-dtype",
  "vortex-error",
  "vortex-flatbuffers",
- "vortex-io",
 ]
 
 [[package]]
 name = "vortex-proto"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "prost",
  "prost-types",
@@ -5255,7 +5408,7 @@ dependencies = [
 [[package]]
 name = "vortex-roaring"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-buffer",
  "croaring",
@@ -5271,7 +5424,7 @@ dependencies = [
 [[package]]
 name = "vortex-runend"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-buffer",
  "itertools",
@@ -5286,7 +5439,7 @@ dependencies = [
 [[package]]
 name = "vortex-runend-bool"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-buffer",
  "itertools",
@@ -5301,7 +5454,7 @@ dependencies = [
 [[package]]
 name = "vortex-sampling-compressor"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "fsst-rs",
  "itertools",
@@ -5327,7 +5480,7 @@ dependencies = [
 [[package]]
 name = "vortex-scalar"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "arrow-array",
  "bytes",
@@ -5347,7 +5500,7 @@ dependencies = [
 [[package]]
 name = "vortex-zigzag"
 version = "0.21.1"
-source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
+source = "git+https://github.com/spiraldb/vortex.git?rev=e64ab4a#e64ab4a51eeddec18b8aa967bb52ef82e5c2080c"
 dependencies = [
  "serde",
  "vortex-array",

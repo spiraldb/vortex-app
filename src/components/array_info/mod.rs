@@ -16,9 +16,11 @@ use vortex::{
     runend::{RunEndArray, RunEndEncoding},
     ArrayData,
 };
-
+use vortex::alp::{ALPArray, ALPEncoding};
+use crate::components::array_info::alp::ALPInfo;
 use crate::SharedPtr;
 
+pub mod alp;
 pub mod bitpacked;
 pub mod constant;
 pub mod dict;
@@ -66,10 +68,15 @@ pub fn EncodingInfo(array: SharedPtr<ArrayData>) -> Element {
         rsx! {
             ConstantInfo { array }
         }
+    } else if encoding == ALPEncoding::ID {
+        let array = SharedPtr(Arc::new(ALPArray::try_from(array)?));
+        rsx! {
+            ALPInfo { array }
+        }
     }
     // Fallback
     else {
         // Empty component
-        rsx! {}
+        rsx! {  }
     }
 }

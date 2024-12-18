@@ -39,8 +39,7 @@ pub fn SchemaTable(dtype: DType) -> Element {
     rsx! {
         div { class: "relative flex flex-col max-w-7/12 bg-clip-border",
             table { class: "table-auto w-full min-w-max text-left border-collapse",
-                thead {
-                    class: "bg-neutral-700 border-b border-1 border-zinc-50/10",
+                thead { class: "bg-neutral-700 border-b border-1 border-zinc-50/10",
                     tr {
                         th { class: "p-4",
                             p { class: "block font-sans text-sm antialiased font-normal leading-none opacity-70",
@@ -56,7 +55,7 @@ pub fn SchemaTable(dtype: DType) -> Element {
                 }
 
                 tbody {
-                    for (field_name, field_type) in names_and_types {
+                    for (field_name , field_type) in names_and_types {
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
                             td { class: "p-1",
                                 p { class: "block font-sans font-bold text-sm antialiased leading-normal",

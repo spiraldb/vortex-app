@@ -23,12 +23,10 @@ pub fn ArrayView(
             // If there are previous history elements, we present a Back button which allows us to
             // pop the stack and go back up to the parent element.
             if history_stack().len() > 1 {
-                div {
-                    class: "flex flex-row items-center",
+                div { class: "flex flex-row items-center",
                     button {
                         class: "btn btn-primary bg-lime-800 text-lime-400 hover:bg-lime-600/75 px-4 py-2 rounded-md",
                         onclick: move |_| {
-                            // Pop the stack to go back to the parent.
                             history_stack.write().pop_front();
                         },
                         "Back"
@@ -144,17 +142,17 @@ fn ArraySummary(array: SharedPtr<ArrayData>, file_name: String) -> Element {
 #[component]
 pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>) -> Element {
     let array = history_stack()[0].clone();
+
     rsx! {
         Heading { text: "Child Arrays" }
 
-        p {
-            class: "p-4 font-regular font-sans text-sm italic text-slate-300/30",
+        p { class: "p-4 font-regular font-sans text-sm italic text-slate-300/30",
             "Click one of the Child Arrays to explore further"
         }
 
         table { class: "table-auto w-full min-w-max max-h-96 overflow-y-scroll text-left border-collapse",
             tbody { class: "border-b border-1 border-zinc-50/10",
-                for (idx , child) in array.children().iter().cloned().enumerate() {
+                for (idx , (name , child)) in array.named_children().into_iter().enumerate() {
                     tr {
                         class: "font-normal border-b border-1 border-zinc-50/10",
                         // Interactivity
@@ -164,13 +162,11 @@ pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>) 
                         onclick: move |_| {
                             let child = child.clone();
                             tracing::info!("descending into the {idx} child");
-                            history_stack
-                                .write()
-                                .push_front(SharedPtr(Arc::new(child)));
+                            history_stack.write().push_front(SharedPtr(Arc::new(child)));
                         },
                         td { class: "p-2",
                             p { class: "block font-sans text-sm antialiased leading-normal",
-                                "Child {idx}"
+                                "{name}"
                             }
                         }
                         td { class: "p-2",

@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use vortex::{compute::try_cast, dtype::PType, runend::RunEndArray, ArrayLen, IntoArrayVariant};
+use vortex::{compute::try_cast, dtype::PType, runend::RunEndArray, IntoArrayVariant};
 
 use crate::SharedPtr;
 

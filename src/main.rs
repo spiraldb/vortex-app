@@ -3,8 +3,9 @@ use std::{collections::VecDeque, ops::Deref};
 
 use bytes::Bytes;
 use components::{array::ArrayView, AppHeader, ErrorMessage};
+use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
-use dioxus_elements::FileEngine;
+use dioxus_elements::{FileEngine, HasFileData};
 use vortex::{
     file::{LayoutContext, LayoutDeserializer, VortexReadBuilder},
     sampling_compressor::ALL_ENCODINGS_CONTEXT,
@@ -24,6 +25,21 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    // Install a global drag handler so that drag-and-drop opening of files does not
+    // bubble up and cause the browser to "download" the file.
+    document::eval(
+        r#"
+        console.log("installing global window event listener for dragover/drop");
+        // Have window catch the dragover event.
+        window.addEventListener("dragover", function (evt) {
+            evt.preventDefault();
+        }, false);
+        window.addEventListener("drop", function (evt) {
+            evt.preventDefault();
+        }, false);
+        "#,
+    );
+
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
@@ -42,7 +58,11 @@ fn Home() -> Element {
     let mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>> = use_signal(VecDeque::new);
 
     let read_files = move |file_engine: Arc<dyn FileEngine>| async move {
-        file_name.set(file_engine.files()[0].clone());
+        let files = file_engine.files();
+        let Some(ref file) = files.first() else {
+            return;
+        };
+        file_name.set(file.to_string());
         let contents = file_engine.read_file(&file_engine.files()[0]).await;
         let contents = Bytes::from(contents.unwrap_or_default());
 
@@ -60,6 +80,7 @@ fn Home() -> Element {
                 Ok(array) => {
                     *read_error.write() = None;
                     // Push onto the front of the stack.
+                    history_stack.write().clear();
                     history_stack.write().push_front(SharedPtr(Arc::new(array)));
                 }
                 Err(err) => *read_error.write() = Some(err.to_string()),
@@ -67,33 +88,63 @@ fn Home() -> Element {
         }
     };
 
+    // True when we have dragged a file but before we drop it.
+    let mut dropping = use_signal(|| false);
+
     rsx! {
-        // Navbar component
+        // The entire app is a dropzone.
         div {
-            class: "p-3 flex flex-row items-center gap-x-3",
-            class: "border-b border-gray-100/10",
-            AppHeader {}
-        }
-
-        // Main content
-        div { class: "w-full px-4 py-4",
-
-            input {
-                r#type: "file",
-                accept: ".vortex",
-                multiple: false,
-                onchange: move |evt| async move {
-                    if let Some(file_engine) = &evt.files() {
-                        read_files(file_engine.clone()).await
-                    }
+            class: "w-full h-screen",
+            ondragover: move |_| {
+                *dropping.write() = true;
+            },
+            ondragleave: move |_| {
+                *dropping.write() = false;
+            },
+            ondrop: move |evt| async move {
+                evt.prevent_default();
+                evt.stop_propagation();
+                *dropping.write() = false;
+                info!("ondrop event handler called");
+                if let Some(file_engine) = evt.files() {
+                    info!("files uploaded: {:?}", file_engine.files());
+                    read_files(file_engine).await;
                 }
+            },
+
+            // Navbar component
+            div {
+                class: "p-3 flex flex-row items-center gap-x-3",
+                class: "border-b border-gray-100/10",
+                AppHeader {}
             }
 
+            // Main content
+            div {
+                class: "w-full h-full px-4 py-4",
+                class: if dropping() { "border-teal-200 border-double border-2" },
 
-            if let Some(error) = read_error() {
-                ErrorMessage { error }
-            } else if !history_stack().is_empty() {
-                ArrayView { file_name: file_name(), history_stack }
+                if history_stack().is_empty() {
+                    p { "Drop a Vortex file to view, or upload it below." }
+
+                    input {
+                        r#type: "file",
+                        accept: ".vortex",
+                        multiple: false,
+                        onchange: move |evt| async move {
+                            *dropping.write() = false;
+                            if let Some(file_engine) = evt.files() {
+                                read_files(file_engine).await;
+                            }
+                        },
+                    }
+                }
+
+                if let Some(error) = read_error() {
+                    ErrorMessage { error }
+                } else if !history_stack().is_empty() {
+                    ArrayView { file_name: file_name(), history_stack }
+                }
             }
         }
     }

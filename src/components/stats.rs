@@ -24,7 +24,7 @@ fn StatsTable(stats: StatsSet) -> Element {
         div { class: "relative flex flex-col max-w-7/12 bg-clip-border",
             table { class: "table-auto w-full min-w-max text-left border-collapse",
                 tbody {
-                    for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v.into_value())) {
+                    for (stat , value) in stats.clone().into_iter().map(|(s, v)| (s, v)) {
                         tr { class: "font-normal hover:bg-neutral-800/75 border-b border-1 border-zinc-50/10",
                             td { class: "p-2",
                                 p { class: "block font-sans text-sm antialiased leading-normal",
