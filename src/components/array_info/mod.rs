@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use crate::components::array_info::alp::ALPInfo;
+use crate::SharedPtr;
 use bitpacked::BitPackedInfo;
 use constant::ConstantInfo;
 use dict::DictInfo;
@@ -7,6 +9,7 @@ use dioxus::prelude::*;
 use frame_of_reference::FrameOfReferenceInfo;
 use fsst::FSSTInfo;
 use runend::RunEndInfo;
+use vortex::alp::{ALPArray, ALPEncoding};
 use vortex::{
     array::{ConstantArray, ConstantEncoding},
     dict::{DictArray, DictEncoding},
@@ -16,9 +19,6 @@ use vortex::{
     runend::{RunEndArray, RunEndEncoding},
     ArrayData,
 };
-use vortex::alp::{ALPArray, ALPEncoding};
-use crate::components::array_info::alp::ALPInfo;
-use crate::SharedPtr;
 
 pub mod alp;
 pub mod bitpacked;

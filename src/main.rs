@@ -1,5 +1,5 @@
+use std::ops::Deref;
 use std::sync::Arc;
-use std::{collections::VecDeque, ops::Deref};
 
 use bytes::Bytes;
 use components::{array::ArrayView, AppHeader, ErrorMessage};
@@ -48,6 +48,55 @@ fn App() -> Element {
     }
 }
 
+// Starts empty instead.
+#[derive(PartialEq, Clone)]
+pub struct HistoryStack {
+    inner: Vec<HistoryItem>,
+}
+
+impl HistoryStack {
+    pub fn empty() -> Self {
+        Self { inner: Vec::new() }
+    }
+
+    pub fn push(&mut self, name: String, array: ArrayData) {
+        self.inner.push(HistoryItem {
+            name,
+            array: SharedPtr(Arc::new(array)),
+        });
+    }
+
+    pub fn clear(&mut self) {
+        self.inner.clear();
+    }
+
+    pub fn goto(&mut self, index: usize) {
+        self.inner.truncate(index + 1);
+    }
+
+    pub fn current(&self) -> Option<&HistoryItem> {
+        self.inner.last()
+    }
+
+    pub fn len(&self) -> usize {
+        self.inner.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.inner.is_empty()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &HistoryItem> {
+        self.inner.iter()
+    }
+}
+
+#[derive(PartialEq, Clone)]
+pub struct HistoryItem {
+    pub name: String,
+    pub array: SharedPtr<ArrayData>,
+}
+
 #[component]
 fn Home() -> Element {
     // Create a file reader.
@@ -55,7 +104,7 @@ fn Home() -> Element {
     let mut read_error = use_signal::<Option<String>>(|| None);
 
     // Push the latest history for each of these elements.
-    let mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>> = use_signal(VecDeque::new);
+    let mut history_stack: Signal<HistoryStack> = use_signal(HistoryStack::empty);
 
     let read_files = move |file_engine: Arc<dyn FileEngine>| async move {
         let files = file_engine.files();
@@ -81,7 +130,7 @@ fn Home() -> Element {
                     *read_error.write() = None;
                     // Push onto the front of the stack.
                     history_stack.write().clear();
-                    history_stack.write().push_front(SharedPtr(Arc::new(array)));
+                    history_stack.write().push(file.to_string(), array);
                 }
                 Err(err) => *read_error.write() = Some(err.to_string()),
             },
@@ -138,12 +187,12 @@ fn Home() -> Element {
                             }
                         },
                     }
-                }
-
-                if let Some(error) = read_error() {
-                    ErrorMessage { error }
-                } else if !history_stack().is_empty() {
-                    ArrayView { file_name: file_name(), history_stack }
+                } else {
+                    if let Some(error) = read_error() {
+                        ErrorMessage { error }
+                    } else {
+                        ArrayView { file_name: file_name(), history_stack }
+                    }
                 }
             }
         }

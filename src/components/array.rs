@@ -1,38 +1,21 @@
-use std::{collections::VecDeque, sync::Arc};
-
+use crate::components::breadcrumb::Breadcrumbs;
+use crate::{
+    components::{array_info::EncodingInfo, dtype::DTypeInfo, stats::Statistics, Heading},
+    HistoryItem, HistoryStack, SharedPtr,
+};
 use dioxus::{logger::tracing, prelude::*};
 use vortex::{stats::ArrayStatistics, validity::ArrayValidity, ArrayDType, ArrayData};
 
-use crate::{
-    components::{array_info::EncodingInfo, dtype::DTypeInfo, stats::Statistics, Heading},
-    SharedPtr,
-};
-
 /// Show some basic info about an ArrayView.
 #[component]
-pub fn ArrayView(
-    file_name: String,
-    history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>,
-) -> Element {
+pub fn ArrayView(file_name: String, history_stack: Signal<HistoryStack>) -> Element {
     // Use the history stack to take data from the front/back of the stack
-    let array = history_stack()[0].clone();
+    let HistoryItem { array, .. } = history_stack().current().unwrap().clone();
     let stats = array.statistics().to_set();
 
     rsx! {
         div { class: "flex flex-col mt-4",
-            // If there are previous history elements, we present a Back button which allows us to
-            // pop the stack and go back up to the parent element.
-            if history_stack().len() > 1 {
-                div { class: "flex flex-row items-center",
-                    button {
-                        class: "btn btn-primary bg-lime-800 text-lime-400 hover:bg-lime-600/75 px-4 py-2 rounded-md",
-                        onclick: move |_| {
-                            history_stack.write().pop_front();
-                        },
-                        "Back"
-                    }
-                }
-            }
+            Breadcrumbs { history_stack }
 
             // schema, row_count
             ArraySummary { array: array.clone(), file_name: file_name.clone() }
@@ -140,8 +123,8 @@ fn ArraySummary(array: SharedPtr<ArrayData>, file_name: String) -> Element {
 }
 
 #[component]
-pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>) -> Element {
-    let array = history_stack()[0].clone();
+pub fn ArrayChildren(mut history_stack: Signal<HistoryStack>) -> Element {
+    let HistoryItem { array, .. } = history_stack().current().unwrap().clone();
 
     rsx! {
         Heading { text: "Child Arrays" }
@@ -162,7 +145,7 @@ pub fn ArrayChildren(mut history_stack: Signal<VecDeque<SharedPtr<ArrayData>>>) 
                         onclick: move |_| {
                             let child = child.clone();
                             tracing::info!("descending into the {idx} child");
-                            history_stack.write().push_front(SharedPtr(Arc::new(child)));
+                            history_stack.write().push(name.clone(), child.clone());
                         },
                         td { class: "p-2",
                             p { class: "block font-sans text-sm antialiased leading-normal",

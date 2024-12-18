@@ -4,6 +4,7 @@ use crate::LOGO;
 
 pub mod array;
 pub mod array_info;
+pub mod breadcrumb;
 pub mod dtype;
 pub mod stats;
 
