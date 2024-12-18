@@ -4940,8 +4940,8 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "vortex"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "vortex-alp",
  "vortex-array",
@@ -4970,8 +4970,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-alp"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-buffer",
  "itertools",
@@ -4996,8 +4996,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-array"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-arith",
  "arrow-array",
@@ -5035,8 +5035,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-buffer"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-buffer",
  "bytes",
@@ -5045,8 +5045,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-bytebool"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-buffer",
  "num-traits",
@@ -5060,8 +5060,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-datetime-dtype"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-schema",
  "jiff",
@@ -5073,8 +5073,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-datetime-parts"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "itertools",
  "serde",
@@ -5087,8 +5087,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-dict"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-buffer",
  "hashbrown 0.15.2",
@@ -5102,8 +5102,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-dtype"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "flatbuffers",
  "half",
@@ -5116,8 +5116,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-error"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-schema",
  "flatbuffers",
@@ -5129,8 +5129,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-expr"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "itertools",
  "vortex-array",
@@ -5141,8 +5141,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-fastlanes"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrayref",
  "arrow-buffer",
@@ -5159,8 +5159,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-file"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -5186,16 +5186,17 @@ dependencies = [
 
 [[package]]
 name = "vortex-flatbuffers"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "flatbuffers",
+ "vortex-buffer",
 ]
 
 [[package]]
 name = "vortex-fsst"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -5210,8 +5211,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-io"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "bytes",
  "cfg-if",
@@ -5227,8 +5228,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-ipc"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "bytes",
  "flatbuffers",
@@ -5244,8 +5245,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-proto"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "prost",
  "prost-types",
@@ -5253,8 +5254,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-roaring"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-buffer",
  "croaring",
@@ -5269,8 +5270,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-runend"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-buffer",
  "itertools",
@@ -5284,8 +5285,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-runend-bool"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-buffer",
  "itertools",
@@ -5299,8 +5300,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-sampling-compressor"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "fsst-rs",
  "itertools",
@@ -5325,8 +5326,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-scalar"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "arrow-array",
  "bytes",
@@ -5345,8 +5346,8 @@ dependencies = [
 
 [[package]]
 name = "vortex-zigzag"
-version = "0.21.0"
-source = "git+https://github.com/spiraldb/vortex.git?rev=020b329#020b329424b8e72971c0a085f09c8ea159f24e78"
+version = "0.21.1"
+source = "git+https://github.com/spiraldb/vortex.git?rev=49bd8d6a#49bd8d6a3f506608145d50863639a2a1f692075b"
 dependencies = [
  "serde",
  "vortex-array",

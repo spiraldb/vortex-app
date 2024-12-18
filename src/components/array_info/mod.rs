@@ -1,12 +1,14 @@
 use std::sync::Arc;
 
 use bitpacked::BitPackedInfo;
+use constant::ConstantInfo;
 use dict::DictInfo;
 use dioxus::prelude::*;
 use frame_of_reference::FrameOfReferenceInfo;
 use fsst::FSSTInfo;
 use runend::RunEndInfo;
 use vortex::{
+    array::{ConstantArray, ConstantEncoding},
     dict::{DictArray, DictEncoding},
     encoding::Encoding,
     fastlanes::{BitPackedArray, BitPackedEncoding, FoRArray, FoREncoding},
@@ -18,6 +20,7 @@ use vortex::{
 use crate::SharedPtr;
 
 pub mod bitpacked;
+pub mod constant;
 pub mod dict;
 pub mod frame_of_reference;
 pub mod fsst;
@@ -57,6 +60,11 @@ pub fn EncodingInfo(array: SharedPtr<ArrayData>) -> Element {
         let array = SharedPtr(Arc::new(RunEndArray::try_from(array)?));
         rsx! {
             RunEndInfo { array }
+        }
+    } else if encoding == ConstantEncoding::ID {
+        let array = SharedPtr(Arc::new(ConstantArray::try_from(array)?));
+        rsx! {
+            ConstantInfo { array }
         }
     }
     // Fallback

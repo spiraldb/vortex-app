@@ -6,7 +6,6 @@ pub mod array;
 pub mod array_info;
 pub mod dtype;
 pub mod stats;
-pub mod table;
 
 #[component]
 pub fn AppHeader() -> Element {
