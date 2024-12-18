@@ -77,6 +77,6 @@ pub fn EncodingInfo(array: SharedPtr<ArrayData>) -> Element {
     // Fallback
     else {
         // Empty component
-        rsx! {  }
+        rsx! {}
     }
 }
