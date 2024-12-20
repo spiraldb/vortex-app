@@ -664,6 +664,10 @@ video {
        column-gap: 0.75rem;
 }
 
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
 .overflow-y-auto {
   overflow-y: auto;
 }

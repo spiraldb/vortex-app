@@ -6,11 +6,15 @@ use dioxus::prelude::*;
 /// Set of pre-created sample files to let users play around with Vortex.
 ///
 /// Entries are tuples of (file_name, file_url).
-const SAMPLE_FILES: [(&str, &str); 1] = [
+const SAMPLE_FILES: [(&str, &str); 2] = [
     // The linteitem TPC-H table.
     (
         "supplier.vortex",
         "https://vortex-public-sample-files.s3.amazonaws.com/supplier.vortex",
+    ),
+    (
+        "part.vortex",
+        "https://vortex-public-sample-files.s3.amazonaws.com/part.vortex",
     ),
 ];
 

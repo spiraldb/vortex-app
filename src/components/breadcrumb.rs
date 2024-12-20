@@ -7,7 +7,7 @@ use dioxus_free_icons::Icon;
 pub fn Breadcrumbs(history_stack: Signal<HistoryStack>) -> Element {
     let last_idx = history_stack().len().checked_sub(1).unwrap_or_default();
     rsx! {
-        div { class: "flex flex-row items-center",
+        div { class: "flex flex-row items-center overflow-x-auto",
             if let Some(HistoryItem { name, .. }) = history_stack().iter().next() {
                 p {
                     class: "text-md font-bold",
