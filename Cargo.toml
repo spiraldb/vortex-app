@@ -14,7 +14,7 @@ humansize = "2.1.3"
 reqwest = "0.12"
 
 # Needed for running Vortex operations
-vortex = { git = "https://github.com/spiraldb/vortex.git", rev = "e64ab4a" }
+vortex = { git = "https://github.com/spiraldb/vortex.git", rev = "1777c2f" }
 
 [features]
 default = ["web"]

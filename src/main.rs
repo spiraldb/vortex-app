@@ -169,7 +169,7 @@ fn Home() -> Element {
                             if let Some(file_engine) = evt.files() {
                                 read_files(file_engine).await;
                             }
-                        }
+                        },
                     }
                     SampleFiles { file_name, read_error, history_stack }
                 } else {
