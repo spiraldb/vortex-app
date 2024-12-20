@@ -1,6 +1,8 @@
 use std::ops::Deref;
 use std::sync::Arc;
 
+use crate::components::sample_files::SampleFiles;
+use crate::file_util::read_file;
 use bytes::Bytes;
 use components::{array::ArrayView, AppHeader, ErrorMessage};
 use dioxus::logger::tracing::info;
@@ -13,6 +15,7 @@ use vortex::{
 };
 
 mod components;
+mod file_util;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
@@ -115,26 +118,7 @@ fn Home() -> Element {
         let contents = file_engine.read_file(&file_engine.files()[0]).await;
         let contents = Bytes::from(contents.unwrap_or_default());
 
-        // Create a new VortexFileReader and send the data to it.
-        let layout_serde = LayoutDeserializer::new(
-            ALL_ENCODINGS_CONTEXT.clone(),
-            LayoutContext::default().into(),
-        );
-
-        match VortexReadBuilder::new(contents, layout_serde).build().await {
-            Err(err) => {
-                *read_error.write() = Some(err.to_string());
-            }
-            Ok(reader) => match reader.read_all().await {
-                Ok(array) => {
-                    *read_error.write() = None;
-                    // Push onto the front of the stack.
-                    history_stack.write().clear();
-                    history_stack.write().push(file.to_string(), array);
-                }
-                Err(err) => *read_error.write() = Some(err.to_string()),
-            },
-        }
+        read_file(file.to_string(), contents, read_error, history_stack).await;
     };
 
     // True when we have dragged a file but before we drop it.
@@ -185,8 +169,9 @@ fn Home() -> Element {
                             if let Some(file_engine) = evt.files() {
                                 read_files(file_engine).await;
                             }
-                        },
+                        }
                     }
+                    SampleFiles { file_name, read_error, history_stack }
                 } else {
                     if let Some(error) = read_error() {
                         ErrorMessage { error }

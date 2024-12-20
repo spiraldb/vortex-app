@@ -7,6 +7,7 @@ pub mod array_info;
 pub mod breadcrumb;
 pub mod dtype;
 pub mod stats;
+pub mod sample_files;
 
 #[component]
 pub fn AppHeader() -> Element {
